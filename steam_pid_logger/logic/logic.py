@@ -1,7 +1,9 @@
 import os
 import re
+import sys
 import psutil
 import fnmatch
+import time
 
 def find_pid_by_file_name(file_names):
     if isinstance(file_names, str):
@@ -29,16 +31,26 @@ def find_exe_files(directory, exclude_files=None, exclude_directories=None):
                 exe_files[file_name] = False
     return exe_files
 
+def filter_out_exe_files(unfiltered_exe_files, exclude_exe):
+    remaining_files = {}
+    print(exclude_exe)
+    # for files in unfiltered_exe_files:
+        
+
+
 def current_proccess(steam_pid, exe_files):
     if steam_pid:
         steam_pid = steam_pid["steam.exe"]
         print(f'Steam is running with the PID of {steam_pid}')
+        current_pids = {}
         for game_exe_name in exe_files:
             game_pid = find_pid_by_file_name(game_exe_name)
             if game_exe_name in game_pid:
                 print(f'Game "{game_exe_name}" is running with the PID of {game_pid[game_exe_name]}')
+                current_pids["game_exe_name"] = game_pid[game_exe_name]
             else:
                 print(f'Game "{game_exe_name}" is not running.')
+        return current_pids
     else:
         print("Steam is not running.")
 
@@ -78,6 +90,7 @@ def convert_acf_to_game_info(*args):
     return game_info
 
 def printout(*args):
+    print(*args)
     for games_result in args:
         for game in games_result:
             print("App ID:", game["app_id"])
@@ -85,23 +98,40 @@ def printout(*args):
             print("Install Directory:", game["install_dir"])
             print("-" * 20)
 
-def log_running_games(*args):
-    running_games = []
-    for process in psutil.process_iter(['name', 'exe']):
-        try:
-            for game in args:
-                if game in process.info['name']:
-                    running_games.append({
-                        'name': process.info['name'],
-                        'pid': process.pid,
-                        'path': process.info['exe']
-                    })
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
+# def log_running_games(*args):
+#     running_games = []
+#     for process in psutil.process_iter(['name', 'exe']):
+#         try:
+#             for game in args:
+#                 if game in process.info['name']:
+#                     running_games.append({
+#                         'name': process.info['name'],
+#                         'pid': process.pid,
+#                         'path': process.info['exe']
+#                     })
+#         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+#             pass
 
-    if running_games:
-        with open('game_logs.txt', 'w') as f:
-            f.write('Running Games:\n')
-            for game in running_games:
-                f.write(f"Name: {game['name']}, PID: {game['pid']}, Path: {game['path']}\n")
-            f.write('\n')
+#     if running_games:
+#         with open('game_logs.txt', 'w') as f:
+#             f.write('Running Games:\n')
+#             for game in running_games:
+#                 f.write(f"Name: {game['name']}, PID: {game['pid']}, Path: {game['path']}\n")
+#             f.write('\n')
+
+def choose_game_to_backup(current_pids):
+    print(current_pids)
+    print("Type quit to exit program")
+    user_input = str(input("Which game do you want to backup?: "))
+    if user_input.lower().strip() == 'quit':
+        sys.exit(0)
+    elif user_input in current_pids:
+        print(current_pids[user_input])
+        return current_pids[user_input]
+    else:
+        print("Invalid Choice Try again")
+        choose_game_to_backup(current_pids)
+
+def on_process_terminated(pid):
+    print(f"The game process with PID {pid} has terminated.")
+    # Perform actions or tasks here when the game process stops, e.g., make a copy of the data
