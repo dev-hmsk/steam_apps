@@ -16,3 +16,5 @@ the user a choice to "update" his .json file by running the whole proccess again
 Once this is complete it will be a simple task of utilizing the psutil event listener to look for the specific PID of the user select game. 
 On proccess termination the python program will wait a determined time (to allow for the game to fully close and for steam to update its save files)
 before copying the save files of the game to a user specified location.
+
+Note: We will make this function generally and then make a specific .exe for Remnant II backups
