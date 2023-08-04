@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import psutil
+import json
 import fnmatch
 import time
 
@@ -16,24 +17,44 @@ def find_pid_by_file_name(file_names):
     return pids
 
 def find_exe_files(directory, exclude_files=None, exclude_directories=None):
-    exe_files = {}
+    exe_files = []
+
     for root, dirs, files in os.walk(directory):
-        # Check if the current directory matches any of the directories to be excluded
-        if exclude_directories:
-            dirs[:] = [d for d in dirs if not any(os.path.abspath(os.path.join(root, d)) == os.path.abspath(ed) for ed in exclude_directories)]
-        
         for file in files:
             if file.endswith(".exe"):
-                file_path = os.path.join(root, file)
-                file_name = os.path.splitext(os.path.basename(file_path))[0] + ".exe"
-                if exclude_files and any(fnmatch.fnmatch(file_name, pattern) for pattern in exclude_files):
-                    continue
-                exe_files[file_name] = False
+                exe_files.append(file)
+        
+
+    #     print(files)
+    #     for file in files:
+    #         if file.endswith(".exe"):
+    #             file_name = os.path.splitext(file)[0] + ".exe"
+    #             if exclude_files and any(pattern in file_name for pattern in exclude_files):
+    #                 continue
+    #             exe_files[file_name] = False
+
     return exe_files
 
-def filter_out_exe_files(unfiltered_exe_files, exclude_exe):
-    remaining_files = {}
-    print(exclude_exe)
+
+"""
+Make this a list instead of a dict before it gets here, that way its easier to manipulate. 
+Right now have the none value doesn't make sense since we can just make it a dict later vs keeping it as a dict and we manipulate it.
+"""
+# def filter_out_exe_files(unfiltered_exe_files, exclude_exe):
+#     filtered_files = []
+#     print(unfiltered_exe_files)
+#     for file in unfiltered_exe_files:
+
+
+
+
+    # print(exclude_exe)
+    # print(unfiltered_exe_files)
+    # print(filtered_files)
+
+    # return filtered_files
+
+
     # for files in unfiltered_exe_files:
         
 

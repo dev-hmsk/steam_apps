@@ -5,6 +5,7 @@
         "setup",
         "vulcan",
         "launcher",
-        "crash"
+        "crash",
+        "vr"
     ]
 }
