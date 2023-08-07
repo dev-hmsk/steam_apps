@@ -1,6 +1,9 @@
 import json
 import os
+import platform
 import sys
+
+from gui.gui import FileSelectionWindow
 from logic.logic import *
 from logger.logger import *
 
@@ -12,9 +15,16 @@ def main():
     python_script_directory = os.path.dirname(os.path.abspath(__file__))
     print(python_script_directory)
 
-    # Create Steam Directory String
-    steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps"
-    steam_common_directory = os.path.join(steamapps_directory, "common")
+    # Check OS
+    system = platform.system()
+
+    if system == "Linux":
+        expand_tilde = os.path.expanduser("~")
+        steamapps_directory = os.path.join(expand_tilde, ".local/share/Steam/steamapps")
+        steam_common_directory = os.path.join(steamapps_directory,"common")
+    if system == "Windows":
+        steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps"
+        steam_common_directory = os.path.join(steamapps_directory, "common")
 
     # Check for Steam Directory in machine
     try:
@@ -23,42 +33,91 @@ def main():
     except MissingDirectoryError:
         sys.exit(1)
 
-    # Create Steam manifest 
-
-    games_result = convert_acf_to_game_info(steamapps_directory)
-    print(games_result)
-
-
+    # # Create Steam manifest 
+    # games_result = convert_acf_to_game_info(steamapps_directory)
     # printout(games_result)
 
-    game_list = game_name_list(games_result)
+    # game_list = game_name_list(games_result)
+    # print(game_list)
 
-    print(game_list)
+    # Create an instance of FileSelectionWindow
+    file_selection_window = FileSelectionWindow(system, steam_common_directory)
 
-    def all_variations_of_game_name(game_list):
-        new_set = set()
-        for name in game_list:
-            check_word_count = name.split()
-            if len(check_word_count) == 1:
-                new_set.add(name)
-            if len(check_word_count) > 1:
-                capital_letters = [letter for letter in name if letter.isupper()]
-                numbers = [number for number in name if number.isdigit()]
-                game_capital_letters = ''.join(capital_letters)
-                game_numbers = ''.join(numbers)
-                new_set.add(game_capital_letters+game_numbers)
-                new_set.add(game_capital_letters)
-                new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
+    # Run the window
+    file_selection_window.run()
 
-        return new_set
+    # Utilize the selected file
+    print(file_selection_window.selected_file)
 
-    # add regex searching to convery possible numerals with numbers
-    final_list_of_possible_game_names = all_variations_of_game_name(game_list)
 
-    # Find all exe files in \common 
-    unfiltered_exe_files = find_exe_files(steam_common_directory)
 
-    print(unfiltered_exe_files)
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def all_variations_of_game_name(game_list):
+    #     new_set = set()
+    #     for name in game_list:
+    #         check_word_count = name.split()
+    #         if len(check_word_count) == 1:
+    #             new_set.add(name)
+    #         if len(check_word_count) > 1:
+    #             capital_letters = [letter for letter in name if letter.isupper()]
+    #             numbers = [number for number in name if number.isdigit()]
+    #             game_capital_letters = ''.join(capital_letters)
+    #             game_numbers = ''.join(numbers)
+    #             new_set.add(game_capital_letters+game_numbers)
+    #             new_set.add(game_capital_letters)
+    #             new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
+
+    #     return new_set
+
+    # # add regex searching to convery possible numerals with numbers
+    # final_list_of_possible_game_names = all_variations_of_game_name(game_list)
+    # print(final_list_of_possible_game_names)
+    # # Find all exe files in \common 
+    # unfiltered_exe_files = find_exe_files(steam_common_directory)
+
+    # print(unfiltered_exe_files)
 
     # # Load the JSON data from the file
     # json_file_path = os.path.join(python_script_directory, "json\\")
@@ -109,5 +168,3 @@ def main():
 
 
 
-if __name__ == "__main__":
-    main()
