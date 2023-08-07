@@ -1,20 +1,20 @@
 import os
 import re
 import sys
-import psutil
+# import psutil
 import json
 import fnmatch
 import time
 
-def find_pid_by_file_name(file_names):
-    if isinstance(file_names, str):
-        file_names = {file_names : False}
+# def find_pid_by_file_name(file_names):
+#     if isinstance(file_names, str):
+#         file_names = {file_names:False}
 
-    pids = {}
-    for process in psutil.process_iter(['pid', 'name']):
-        if process.info['name'] in file_names:
-            pids[process.info['name']] = str(process.info['pid'])
-    return pids
+#     pids = {}
+#     for process in psutil.process_iter(['pid', 'name']):
+#         if process.info['name'] in file_names:
+#             pids[process.info['name']] = str(process.info['pid'])
+#     return pids
 
 def find_exe_files(directory, exclude_files=None, exclude_directories=None):
     exe_files = []
@@ -77,8 +77,8 @@ def current_proccess(steam_pid, exe_files):
 
 def convert_acf_to_game_info(*args):
     steamapps_folder, = args
-    manifest_files = [f for f in os.listdir(steamapps_folder) if f.startswith("appmanifest") and f.endswith(".acf")]
 
+    manifest_files = [f for f in os.listdir(steamapps_folder) if f.startswith("appmanifest") and f.endswith(".acf")]
     game_info = []
     for manifest_file in manifest_files:
         manifest_path = os.path.join(steamapps_folder, manifest_file)
@@ -110,6 +110,7 @@ def convert_acf_to_game_info(*args):
                 print(f"Error reading {manifest_file}: {e}")
     return game_info
 
+
 def printout(*args):
     print(*args)
     for games_result in args:
@@ -119,6 +120,30 @@ def printout(*args):
             print("Install Directory:", game["install_dir"])
             print("-" * 20)
 
+
+def game_name_list(games_result):
+    game_name_list = []
+    for game in games_result:
+        game_name_list.append(game["name"])
+    return game_name_list
+
+
+def all_variations_of_game_name(game_list):
+    new_set = set()
+    for name in game_list:
+        check_word_count = name.split()
+        if len(check_word_count) == 1:
+            new_set.add(name)
+        if len(check_word_count) > 1:
+            capital_letters = [letter for letter in name if letter.isupper()]
+            numbers = [number for number in name if number.isdigit()]
+            game_capital_letters = ''.join(capital_letters)
+            game_numbers = ''.join(numbers)
+            new_set.add(game_capital_letters+game_numbers)
+            new_set.add(game_capital_letters)
+            new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
+
+    return new_set
 # def log_running_games(*args):
 #     running_games = []
 #     for process in psutil.process_iter(['name', 'exe']):
