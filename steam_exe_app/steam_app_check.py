@@ -1,14 +1,12 @@
-import json
 import os
 import platform
 import sys
-
-from gui.gui import FileSelectionWindow, SaveSelectionWindow, CombinedSelectionWindow
+from gui.gui import CombinedSelectionWindow
 from logic.logic import *
 from logger.logger import *
 
+
 def main():
-    # Program is written to run on Windows OS
 
     # Python Script Directory
     print("Current working directory:", os.getcwd())
@@ -35,30 +33,14 @@ def main():
     except MissingDirectoryError:
         sys.exit(1)
 
-    # # Create Steam manifest 
-    # games_result = convert_acf_to_game_info(steamapps_directory)
-    # printout(games_result)
+    # Create Steam manifest 
+    games_result = convert_acf_to_game_info(steamapps_directory)
+    printout(games_result)
 
-    # game_list = game_name_list(games_result)
-    # print(game_list)
-    '''
-    Seperate Windows
+    game_list = game_name_list(games_result)
+    print(game_list)
 
-    # Create an instance of FileSelectionWindow
-    file_selection_window = FileSelectionWindow(system, steam_common_directory)
-    # Run the window
-    file_selection_window.run()
-    # Utilize the selected file
-    print(file_selection_window.selected_file)
-    save_selection_window = SaveSelectionWindow(system, base_directory)
-    # Run the window
-    save_selection_window.run()
-    #Utilize the selected directory
-    print(save_selection_window.selected_directory)
-    
-    '''
-
-    combined_selection_window = CombinedSelectionWindow(system, steam_common_directory)
+    combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
     combined_selection_window.run()
 
     print(combined_selection_window.selected_file)
