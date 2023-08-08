@@ -3,7 +3,7 @@ import os
 import platform
 import sys
 
-from gui.gui import FileSelectionWindow
+from gui.gui import FileSelectionWindow, SaveSelectionWindow, CombinedSelectionWindow
 from logic.logic import *
 from logger.logger import *
 
@@ -22,9 +22,11 @@ def main():
         expand_tilde = os.path.expanduser("~")
         steamapps_directory = os.path.join(expand_tilde, ".local/share/Steam/steamapps")
         steam_common_directory = os.path.join(steamapps_directory,"common")
+        base_directory = expand_tilde
     if system == "Windows":
         steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps"
         steam_common_directory = os.path.join(steamapps_directory, "common")
+        base_directory = r"C:\Program Files (x86)"
 
     # Check for Steam Directory in machine
     try:
@@ -39,19 +41,28 @@ def main():
 
     # game_list = game_name_list(games_result)
     # print(game_list)
+    '''
+    Seperate Windows
 
     # Create an instance of FileSelectionWindow
     file_selection_window = FileSelectionWindow(system, steam_common_directory)
-
     # Run the window
     file_selection_window.run()
-
     # Utilize the selected file
     print(file_selection_window.selected_file)
+    save_selection_window = SaveSelectionWindow(system, base_directory)
+    # Run the window
+    save_selection_window.run()
+    #Utilize the selected directory
+    print(save_selection_window.selected_directory)
+    
+    '''
 
+    combined_selection_window = CombinedSelectionWindow(system, steam_common_directory)
+    combined_selection_window.run()
 
-
-
+    print(combined_selection_window.selected_file)
+    print(combined_selection_window.selected_directory)
 
 
 

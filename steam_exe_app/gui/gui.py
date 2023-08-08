@@ -2,8 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 
-
-class FileSelectionWindow:
+class SelectionWindow:
 
     def __init__(self, system, initial_directory):
         self.root = tk.Tk()
@@ -26,12 +25,9 @@ class FileSelectionWindow:
         self.initial_directory = initial_directory
 
         self.selected_file = []
+        self.selected_directory = []
 
-        self.open_button = tk.Button(self.root, text="Select File", command=self.open_file)
-        self.open_button.pack(pady=20)
-
-
-    def open_file(self):
+    def select_file(self):
         '''
         We can add more specificity using self.system if desired.
         However steam/developers are inconsistent with file ext for their games.
@@ -44,15 +40,68 @@ class FileSelectionWindow:
         # Select File Path
         file_path = filedialog.askopenfilename(initialdir=self.initial_directory, title="Select a file", filetypes=((" files", "*.*"), ("All files", "*.*")))
         if file_path:
-            # Do something with the selected file path (e.g., process the file)
             print("Selected file:", file_path)
             self.selected_file = file_path
-            self.root.destroy()  # Close the Tkinter window after selection
+
+    def select_directory(self):
+        dir_path = filedialog.askdirectory()
+        if dir_path:
+            print("Selected Directory:", dir_path)
+            self.selected_directory = dir_path
 
     def run(self):
         self.root.mainloop()
 
-if __name__ == "__main__":
-    # Example usage of the class
-    file_selection_window = FileSelectionWindow("/path/to/directory")
-    file_selection_window.run()
+    def close(self):
+        self.root.destroy()
+
+
+class FileSelectionWindow(SelectionWindow):
+
+    def __init__(self, system, initial_directory):
+        super().__init__(system, initial_directory)
+
+        # Message
+        file_message = "Please select the executable file for the game you would like to have auto-backup"
+        self.file_label = tk.Label(self.root, text=file_message, font=("Helvetica", 16), wraplength=300)
+        self.file_label.pack(pady=20)
+
+        self.select_button = tk.Button(self.root, text="Select File", command=self.select_file)
+        self.select_button.pack(pady=20)
+
+    def select_file(self):
+        super().select_file()
+
+        if self.selected_file:
+            file_message = f"Currently Selected File {self.selected_file}"
+            self.file_label.config(text=file_message)
+            self.file_label.pack(pady=20)
+
+
+class SaveSelectionWindow(SelectionWindow):
+    def __init__(self, system, initial_directory):
+        super().__init__(system, initial_directory)
+
+        # Message
+        dir_message = "Please select the save location for the game you would like to have auto-backup"
+        self.dir_label = tk.Label(self.root, text=dir_message, font=("Helvetica", 16), wraplength=300)
+        self.dir_label.pack(pady=20)
+
+
+
+        # Create a button to trigger the directory selection
+        self.select_button = tk.Button(self.root, text="Select Directory", command=self.select_directory)
+        self.select_button.pack(pady=20)
+    
+    def select_directory(self):
+        super().select_directory()  # Call the parent class method
+
+        if self.selected_directory:
+            dir_message = f"Currently Selected Directory: {self.selected_directory}"
+            self.dir_label.config(text=dir_message)
+            self.dir_label.pack(pady=20)
+
+
+class CombinedSelectionWindow(SaveSelectionWindow, FileSelectionWindow):
+    def __init__(self, system, initial_directory):
+        super().__init__(system, initial_directory)
