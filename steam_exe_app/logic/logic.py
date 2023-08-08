@@ -144,6 +144,7 @@ def all_variations_of_game_name(game_list):
             new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
 
     return new_set
+
 # def log_running_games(*args):
 #     running_games = []
 #     for process in psutil.process_iter(['name', 'exe']):
