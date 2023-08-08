@@ -1,14 +1,21 @@
-import sys
 import os
 import logging
 
+
+# Get the directory where the script is located
+script_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Create the log directory path
+log_directory = os.path.join(script_directory, 'logger_info')
+os.makedirs(log_directory, exist_ok=True)  # Create the directory if it doesn't exist
 
 # Create a logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Create a file handler and set level to debug
-file_handler = logging.FileHandler('steam_exe_app/logger/app.log')
+log_file_path = os.path.join(log_directory, 'app.log')
+file_handler = logging.FileHandler(log_file_path)
 file_handler.setLevel(logging.DEBUG)
 
 # Create a console handler and set level to debug

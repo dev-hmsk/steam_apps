@@ -1,7 +1,7 @@
 import os
 import platform
 import sys
-from gui.gui import CombinedSelectionWindow
+from gui.gui import CombinedSelectionWindow, ErrorWindow
 from logic.logic import *
 from logger.logger import *
 
@@ -26,11 +26,15 @@ def main():
         steam_common_directory = os.path.join(steamapps_directory, "common")
         base_directory = r"C:\Program Files (x86)"
 
-    # Check for Steam Directory in machine
+    # Check for Steam Directory
     try:
         check_directory(steamapps_directory)
 
-    except MissingDirectoryError:
+    except MissingDirectoryError as e:
+        logger = logging.getLogger(__name__)
+        error_message = str(e)
+        error_window = ErrorWindow(logger, error_message)
+        error_window.run()
         sys.exit(1)
 
     # Create Steam manifest 
@@ -44,8 +48,9 @@ def main():
     combined_selection_window.run()
 
     print(combined_selection_window.selected_file)
+    print(combined_selection_window.selected_multi_files)
     print(combined_selection_window.selected_directory)
-
+    print(combined_selection_window.selected_save_location)
 
 
 

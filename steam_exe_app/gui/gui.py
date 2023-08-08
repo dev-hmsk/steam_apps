@@ -152,11 +152,40 @@ class CombinedSelectionWindow(SaveSelectionWindow, FileSelectionWindow):
         super().__init__(system, initial_directory, base_directory)
 
         self.info = info
-        # self.make_multiple_buttons()
 
-    # def make_multiple_buttons(self):
-    #     if self.info:
-    #         names = self.info
-    #         for name in names:
-    #             install_dir = name["install_dir"]
-    #             game_name = name["name"]
+        # # Create Drop Down Menu
+        # self.combobox_label = tk.Label(self.root, text="Select a game:")
+        # self.combobox_label.pack(pady=10)
+        # self.game_options = [name["name"] for name in info]
+        # self.selected_game = tk.StringVar()
+        # self.combobox = ttk.Combobox(self.root, textvariable=self.selected_game, values=self.game_options)
+        # self.combobox.pack(pady=5)
+
+
+class ErrorWindow():
+    def __init__(self, logger, error_message):
+        self.root = tk.Tk()
+        self.root.title("Error")
+
+        self.root.style = tk.ttk.Style()
+        self.root.style.theme_use("clam")
+
+        # Window Dimensions
+        self.window_width = 400
+        self.window_height = 200
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+        self.x_pos = (self.screen_width - self.window_width) // 2
+        self.y_pos = (self.screen_height - self.window_height) // 2
+        self.root.geometry(f"{self.window_width}x{self.window_height}+{self.x_pos}+{self.y_pos}")
+        self.root.minsize(400, 200)
+
+        # Attributes
+        self.error_message = error_message
+
+        # Error Message
+        self.file_label = tk.Label(self.root, text=self.error_message, font=("Helvetica", 16), wraplength=300)
+        self.file_label.pack(pady=20)
+
+    def run(self):
+        self.root.mainloop()
