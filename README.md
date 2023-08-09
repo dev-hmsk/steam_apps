@@ -1,8 +1,4 @@
 # steam_apps
-Steam Task Manager - collects all .exe files from /common and uses psutil to listen for PIDs of .exe. Converts the Steam provided 
-.acf files into list of dicts to create a catalog of game sub directories. Also uses fnmatch to create an exclusionary 
-list of directories to reduce computation time. Runs locally without need of Steam API or keys
-
 Steam Auto Backup
 - Allows the user to select file/files/directory to backup at a specified directory location.
 - Use Tkinter for GUI
@@ -14,3 +10,9 @@ Steam Auto Backup
 - This info is passed into our process listener. When the app detects the game is running it waits for shutdown to backup
 - Some games may allow for backup while running. This is be game-by-game implementation
 - Backup can also be set to a timer to update every X minutes/hours/days
+
+Steam Task Manager (currently on hiatus) 
+- collects all .exe files from /common and uses psutil to listen for PIDs of .exe.
+- Converts the Steam provided .acf files into list of dicts to create a catalog of game sub directories.
+- Also uses fnmatch to create an exclusionary list of directories to reduce computation time. Runs locally without need of Steam API or keys
+
