@@ -1,9 +1,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import os
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 
-class SelectionWindow:
+class SelectionWindow():
 
     def __init__(self, system, initial_directory, base_directory):
         self.root = tk.Tk()
@@ -31,10 +31,12 @@ class SelectionWindow:
         self.selected_file = []  # Single element
         self.selected_multi_files = []  # Multiple elements
         self.selected_directory = []  # Single Element
-
+        self.selected_game_app = [] # Single Element
         # Variable for user selected save location
         self.selected_save_location = []  # Single Element
         
+
+
     def select_file(self):  # For single file elements
         file_path = filedialog.askopenfilename(
             initialdir=self.initial_directory,
@@ -57,6 +59,17 @@ class SelectionWindow:
         if file_paths:
             print("Selected Files:", file_paths)
             self.selected_multi_files = file_paths
+
+    def select_game_app(self):  # Select the exe or equivalent
+        app_path = filedialog.askopenfilename(
+            initialdir=self.initial_directory,
+            title="Select Multiple Files",
+            filetypes=(("All Files", "*.*"),)
+        )
+
+        if app_path:
+            print("Selected Files:", app_path)
+            self.selected_game_app = app_path
 
     def select_directory(self):
         dir_path = filedialog.askdirectory(initialdir=self.base_directory)
@@ -192,3 +205,19 @@ class ErrorWindow():
 
     def run(self):
         self.root.mainloop()
+
+
+class PasswordDialog:
+    def __init__(self, title="Password", prompt="Enter admin/sudo password:", message=None):
+        self.title = title
+        self.prompt = prompt
+        self.message = message
+
+    def get_password(self):
+        full_prompt = self.message + "\n \n" + self.prompt if self.message else self.prompt
+        password = simpledialog.askstring(self.title, full_prompt, show="*")
+        return password
+    
+    def set_message(self, new_message):
+        self.message = new_message
+
