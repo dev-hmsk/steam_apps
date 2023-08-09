@@ -1,0 +1,11 @@
+{
+    "exclude_exe_words": [
+        "cheat",
+        "redist",
+        "setup",
+        "vulcan",
+        "launcher",
+        "crash",
+        "vr"
+    ]
+}
