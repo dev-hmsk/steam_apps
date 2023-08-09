@@ -1,6 +1,5 @@
 import os
 import platform
-import sys
 from gui.gui import CombinedSelectionWindow, ErrorWindow
 from logic.logic import *
 from logger.logger import *
@@ -31,13 +30,12 @@ def main():
         check_directory(steamapps_directory)
 
     except MissingDirectoryError as e:
-        logger = logging.getLogger(__name__)
         error_message = str(e)
-        error_window = ErrorWindow(logger, error_message)
-        error_window.run()
-        sys.exit(1)
+        ErrorWindow(error_message)
+        CriticalError(e)
 
-    # Create Steam manifest 
+    # Create Steam manifest
+
     games_result = convert_acf_to_game_info(steamapps_directory)
     printout(games_result)
 
@@ -61,6 +59,7 @@ def main():
 
 
 if __name__ == "__main__":
+    clear_log_files() # clear everything above DEBUG level
     main()
 
 

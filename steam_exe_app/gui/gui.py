@@ -38,24 +38,24 @@ class SelectionWindow:
     def select_file(self):  # For single file elements
         file_path = filedialog.askopenfilename(
             initialdir=self.initial_directory,
-            title="Select a file",
-            filetypes=((" files", "*.*"),
-                       ("All files", "*.*"))
+            title="Select a File",
+            filetypes=((" Files", "*.*"),
+                       ("All Files", "*.*"))
         )
 
         if file_path:
-            print("Selected file:", file_path)
+            print("Selected File:", file_path)
             self.selected_file = file_path
 
     def select_multi_files(self):  # For multiple file elements
         file_paths = filedialog.askopenfilenames(
             initialdir=self.initial_directory,
-            title="Select multiple files",
-            filetypes=(("All files", "*.*"),)
+            title="Select Multiple Files",
+            filetypes=(("All Files", "*.*"),)
         )
 
         if file_paths:
-            print("Selected files:", file_paths)
+            print("Selected Files:", file_paths)
             self.selected_multi_files = file_paths
 
     def select_directory(self):
@@ -163,7 +163,7 @@ class CombinedSelectionWindow(SaveSelectionWindow, FileSelectionWindow):
 
 
 class ErrorWindow():
-    def __init__(self, logger, error_message):
+    def __init__(self, error_message):
         self.root = tk.Tk()
         self.root.title("Error")
 
@@ -171,14 +171,14 @@ class ErrorWindow():
         self.root.style.theme_use("clam")
 
         # Window Dimensions
-        self.window_width = 400
-        self.window_height = 200
+        self.window_width = 300
+        self.window_height = 150
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
         self.x_pos = (self.screen_width - self.window_width) // 2
         self.y_pos = (self.screen_height - self.window_height) // 2
         self.root.geometry(f"{self.window_width}x{self.window_height}+{self.x_pos}+{self.y_pos}")
-        self.root.minsize(400, 200)
+        self.root.minsize(300, 150)
 
         # Attributes
         self.error_message = error_message
@@ -186,6 +186,9 @@ class ErrorWindow():
         # Error Message
         self.file_label = tk.Label(self.root, text=self.error_message, font=("Helvetica", 16), wraplength=300)
         self.file_label.pack(pady=20)
+
+        # If this class is created it will always .run()
+        self.run()
 
     def run(self):
         self.root.mainloop()
