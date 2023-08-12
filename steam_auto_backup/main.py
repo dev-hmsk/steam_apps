@@ -1,5 +1,4 @@
 import os
-import subprocess
 import platform
 from script.script import *
 from gui.gui import *
@@ -49,7 +48,7 @@ def main():
 
     # Create Steam manifest
     games_result = convert_acf_to_game_info(steamapps_directory)
-    # printout(games_result)
+    printout(games_result)
 
     # game_list = game_name_list(games_result)
     # print(game_list)
@@ -57,11 +56,11 @@ def main():
     combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
     combined_selection_window.run()
 
-    # # Debug Print
-    # print(combined_selection_window.selected_file)
-    # print(combined_selection_window.selected_multi_files)
-    # print(combined_selection_window.selected_directory)
-    # print(combined_selection_window.selected_save_location)
+    # Debug Print
+    print(combined_selection_window.selected_file)
+    print(combined_selection_window.selected_multi_files)
+    print(combined_selection_window.selected_directory)
+    print(combined_selection_window.selected_save_location)
 
 
 
