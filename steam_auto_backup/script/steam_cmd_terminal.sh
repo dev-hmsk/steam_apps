@@ -27,3 +27,5 @@ read appid && echo "$(steamcmd +login anonymous +app_info_print $appid +quit)"
 
 # Capture and Print result of app_info_print() in the SteamCMD CLI with jq for specific info
 read appid && echo "$(steamcmd +login anonymous +app_info_print $appid +quit)" > test.txt | 
+
+#
