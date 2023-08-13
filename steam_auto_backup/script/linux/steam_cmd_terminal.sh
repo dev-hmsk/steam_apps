@@ -2,7 +2,7 @@
 
 # Set DIR locations
 BASE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-SAVE_DIR="$BASE_DIR/../json/steam_game_info"
+SAVE_DIR="$BASE_DIR/../../json/steam_game_info"
 
 # Navigate to and open Steam CMD
 function open_steam_cmd () {
@@ -40,23 +40,23 @@ function login_steam_account () {
 }
 
 # Function to get app info in JSON format
-function get_app_info_json () {
-    echo "Creating ${1}_app_info.json"
-    steamcmd +app_info_print "$1" > "$SAVE_DIR/${1}_app_info.json" <<EOF
+function get_app_info_vdf () {
+    echo "Creating ${1}_app_info.vdf"
+    steamcmd +app_info_print "$1" > "$SAVE_DIR/${1}_app_info.vdf" <<EOF
 quit
 EOF
-    echo "Saving ${1}_app_info.json in $SAVE_DIR"
-    sed -n '/Steam>/,$p' "$SAVE_DIR/${1}_app_info.json" > "$SAVE_DIR/temp.json"
-    mv "$SAVE_DIR/temp.json" "$SAVE_DIR/${1}_app_info.json"
+    echo "Saving ${1}_app_info.vdf in $SAVE_DIR"
+    sed -n '/Steam>/,$p' "$SAVE_DIR/${1}_app_info.vdf" > "$SAVE_DIR/temp.vdf"
+    mv "$SAVE_DIR/temp.vdf" "$SAVE_DIR/${1}_app_info.vdf"
     
-    echo "Cleaning up ${1}_app_info.json by removing non-json elements"
-    sed -i '1d' "$SAVE_DIR/${1}_app_info.json"
+    echo "Cleaning up ${1}_app_info.vdf by removing non-vdf elements"
+    sed -i '1d' "$SAVE_DIR/${1}_app_info.vdf"
 }
 
 # Execute the specified function
-if [ "$1" == "get_app_info_json" ]; then
-    echo "Executing get_app_info_json with $2"
-    get_app_info_json "$2"
+if [ "$1" == "get_app_info_vdf" ]; then
+    echo "Executing get_app_info_vdf with $2"
+    get_app_info_vdf "$2"
 elif [ "$1" == "open_login_quit_steam_cmd" ]; then
     echo "Executing open_login_quit_steam_cmd"
     open_login_quit_steam_cmd

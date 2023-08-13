@@ -25,18 +25,17 @@ def sh_initial_setup_script(sh_script_path, new_message=None):
             # logger.info(f"STOUT Terminal Debug: \n {stdout}")
 
             if "Sorry, try again" in stderr:
-                print("Incorrect sudo password entered. Retrying...")
                 message = "Incorrect Password Entered. Try Again"
+                logger.error(message)
                 sh_initial_setup_script(sh_script_path, message)  # Recursive message
 
             elif process.returncode == 0:
                 message = "initial_setup.sh script executed successfully."
-                print(message)
                 logger.info(message)
 
             else:
                 print("Error executing .sh script.")
-                print(process.returncode)
+                # print(process.returncode)
                 logger.error(stderr)
 
         except Exception as e:
@@ -60,13 +59,9 @@ def get_steamcmd_app_info_script(sh_steam_cmd_path, function_name, app_id):
     stdout, stderr = process.communicate()
 
     if stdout:
-        print("Standard Output:")
         logger.info(stdout)
-        print(stdout)
     if stderr:
-        print("Standard Error:")
         logger.error(stderr)
-        print(stderr)
 
 def login_to_steamcmd_as_anon(sh_steam_cmd_path, function_name):
     process = subprocess.Popen([sh_steam_cmd_path, function_name],
@@ -77,10 +72,6 @@ def login_to_steamcmd_as_anon(sh_steam_cmd_path, function_name):
     stdout, stderr = process.communicate()
     
     if stdout:
-        print("Standard Output:")
         logger.info(stdout)
-        print(stdout)
     if stderr:
-        print("Standard Error:")
         logger.error(stdout)
-        print(stderr)

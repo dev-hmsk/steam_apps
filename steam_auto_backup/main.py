@@ -1,5 +1,8 @@
+import vdf
 import os
 import platform
+import json
+
 from script.script import *
 from gui.gui import *
 from logic.logic import *
@@ -16,49 +19,73 @@ def main():
     # Check OS
     system = platform.system()
 
-    if system == "Linux":  # Execute Linux Code Blocksu
+    if system == "Linux":  # Execute Linux Code Blocks
         # Set directory vars
-        expand_tilde = os.path.expanduser("~")
+        expand_tilde = os.path.expanduser("~") # Specific for Linux OS
         steamapps_directory = os.path.join(expand_tilde, ".local/share/Steam/steamapps")
         steam_common_directory = os.path.join(steamapps_directory,"common")
         base_directory = expand_tilde
-        
+
         # Set script paths
-        sh_script_path = os.path.join(expand_tilde, python_script_directory, "script", "initial_setup.sh")
-        sh_steamcmd_path = os.path.join(expand_tilde, python_script_directory, "script", "steam_cmd_terminal.sh")
-        
+        main_script_path = os.path.join(expand_tilde, python_script_directory, "script", "linux", "initial_setup.sh")
+        steamcmd_script_path = os.path.join(expand_tilde, python_script_directory, "script", "linux", "steam_cmd_terminal.sh")
+
+        # Set .vdf/.json paths
+        vdf_steam_game_info_path = os.path.join(expand_tilde, python_script_directory, "json", "steam_game_info" )
+
         # Run initial_setup.sh
-        sh_initial_setup_script(sh_script_path)
-        
-        # Check for Steam Directory
-        try:
-            check_directory(steamapps_directory)
-
-        except MissingDirectoryError as e:
-            error_message = str(e)
-            ErrorWindow(error_message)
-            CriticalError(e)
-
-        # Create Steam manifest
-        games_result = convert_acf_to_game_info(steamapps_directory)
-
-        # Login in once as Anonymous and then exit to setup SteamCMD CLI
-        login_to_steamcmd_as_anon(sh_steamcmd_path, function_name="open_login_quit_steam_cmd")
-
-        # Pass app_id from games_result to create .json file with all app info taken from SteamCMD
-        for game in games_result:
-            app_id = game["app_id"]
-            get_steamcmd_app_info_script(sh_steamcmd_path, function_name="get_app_info_json", app_id=app_id)
+        sh_initial_setup_script(main_script_path)
 
     if system == "Windows": # Execute Windows Code Block
+        """
+        We need to test this in a Windows OS enviroment. 
+        This current code makes assumptions on pathing
+        """
         # Set directory vars
-        steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps"
+        steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps" 
         steam_common_directory = os.path.join(steamapps_directory, "common")
         base_directory = r"C:\Program Files (x86)"
-        # Select initial_setup.bat
-        bat_script_path = 'add/file/path/to/script.bat'
-        run_bat_script(bat_script_path)
 
+        # Set script paths
+        main_script_path = os.path.join(expand_tilde, python_script_directory, "script", "windows", "initial_setup.bat")
+        steamcmd_script_path = os.path.join(expand_tilde, python_script_directory, "script", "windows", "steam_cmd_terminal.bat")
+
+        # Set .vdf/.json paths
+        vdf_steam_game_info_path = os.path.join(python_script_directory, "json", "steam_game_info" )
+
+        # Run initial_setup.bat
+        run_bat_script(main_script_path)
+
+    """
+    Based on above OS-specific path setting the below code should be OS agnostic
+    """
+
+    # Check for Steam Directory
+    try:
+        check_directory(steamapps_directory)
+
+    except MissingDirectoryError as e: # If no Steam Directory exists the program should terminate and log the error code
+        error_message = str(e)
+        ErrorWindow(error_message)
+        CriticalError(e)
+
+    # Create Steam manifest
+    games_result = convert_acf_to_game_info(steamapps_directory)
+
+    # Login in once as Anonymous and then exit to setup SteamCMD CLI
+    login_to_steamcmd_as_anon(steamcmd_script_path, function_name="open_login_quit_steam_cmd")
+
+    # Pass app_id from games_result to create .vdf file with all app info taken from SteamCMD
+    for game in games_result:
+        app_id = game["app_id"]
+        get_steamcmd_app_info_script(steamcmd_script_path, function_name="get_app_info_vdf", app_id=app_id)
+        
+        # Convert .vdf files to .json format
+        vdf_to_json(vdf_steam_game_info_path, app_id)
+        # Remove .vdf files <- Not stricly neccisary but makes it cleaner
+        remove_vdf_files(vdf_steam_game_info_path, app_id)
+
+    # Open Tkinter GUI
 
     # combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
     # combined_selection_window.run()
@@ -68,6 +95,48 @@ def main():
     # print(combined_selection_window.selected_multi_files)
     # print(combined_selection_window.selected_directory)
     # print(combined_selection_window.selected_save_location)
+
+def vdf_to_json(vdf_steam_game_info_path, app_id):
+    vdf_path = f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf"
+    json_path = f"{vdf_steam_game_info_path}/{app_id}_app_info.json"
+
+    try:
+        with open(vdf_path, "r") as file:
+            vdf_data = vdf.load(file)
+    except FileNotFoundError:
+        message = f"Error: VDF file for {app_id} not found."
+        logger.error(message)
+        return
+    except Exception as vdf_load_error:
+        message = f"Error: Loading {app_id} VDF:", vdf_load_error
+        logger.error(message)
+        return
+    try:
+        json_output = json.dumps(vdf_data, indent=4)
+    except Exception as json_dump_error:
+        message = f"Error: Converting to {app_id} JSON:", json_dump_error
+        logger.error(message)
+        return
+    try:
+        with open(json_path, 'w') as f:
+            f.write(json_output)
+    except Exception as json_write_error:
+        message = f"Error: Writing {app_id} JSON:", json_write_error
+        logger.error(message)
+        return
+
+    message = f"{app_id} vdf to json Conversion completed successfully."
+    logger.info(message)
+
+def remove_vdf_files (vdf_steam_game_info_path, app_id):
+    if os.path.exists(f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf"):
+        os.remove(f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf")
+        message = f"{app_id}_app_info.vdf removed succesfully"
+        logger.info(message)
+    else:
+        message = f"{app_id}_app_info.vdf does not exist"
+        print(message)
+        logger.error(message)
 
 
 
