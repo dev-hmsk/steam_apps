@@ -1,0 +1,42 @@
+2023-08-13 12:05:17,578 - INFO - New Program Execution
+2023-08-13 12:05:28,765 - INFO - initial_setup.sh script executed successfully.
+2023-08-13 12:05:31,935 - INFO - Executing open_login_quit_steam_cmd
+Navigating to and opening Steam CMD...
+Redirecting stderr to '/home/hsalfeld/.local/share/Steam/logs/stderr.txt'
+[  0%] Checking for available updates...
+[----] Verifying installation...
+Steam Console Client (c) Valve Corporation - version 1691628584
+-- type 'quit' to exit --
+Loading Steam API...dlmopen steamservice.so failed: steamservice.so: cannot open shared object file: No such file or directory
+OK
+
+Connecting anonymously to Steam Public...OK
+Waiting for client config...OK
+Waiting for user info...OK
+[1m
+Steam>[0m
+2023-08-13 12:05:33,647 - INFO - Executing get_app_info_json with 92800
+Creating 92800_app_info.json
+Saving 92800_app_info.json in /home/hsalfeld/repos/steam_apps/steam_auto_backup/script/../json/steam_game_info
+Cleaning up 92800_app_info.json by removing non-json elements
+
+2023-08-13 12:05:35,617 - INFO - Executing get_app_info_json with 469920
+Creating 469920_app_info.json
+Saving 469920_app_info.json in /home/hsalfeld/repos/steam_apps/steam_auto_backup/script/../json/steam_game_info
+Cleaning up 469920_app_info.json by removing non-json elements
+
+2023-08-13 12:05:37,472 - INFO - Executing get_app_info_json with 29180
+Creating 29180_app_info.json
+Saving 29180_app_info.json in /home/hsalfeld/repos/steam_apps/steam_auto_backup/script/../json/steam_game_info
+Cleaning up 29180_app_info.json by removing non-json elements
+
+2023-08-13 12:05:39,246 - INFO - Executing get_app_info_json with 328080
+Creating 328080_app_info.json
+Saving 328080_app_info.json in /home/hsalfeld/repos/steam_apps/steam_auto_backup/script/../json/steam_game_info
+Cleaning up 328080_app_info.json by removing non-json elements
+
+2023-08-13 12:05:41,062 - INFO - Executing get_app_info_json with 1162750
+Creating 1162750_app_info.json
+Saving 1162750_app_info.json in /home/hsalfeld/repos/steam_apps/steam_auto_backup/script/../json/steam_game_info
+Cleaning up 1162750_app_info.json by removing non-json elements
+
