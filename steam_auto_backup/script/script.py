@@ -3,6 +3,7 @@ import subprocess
 from gui.gui import PasswordDialog
 from logger.logger import *
 
+
 def sh_initial_setup_script(sh_script_path, new_message=None):
     # Get the sudo password from the user using a GUI dialog
     password_dialog_obj = PasswordDialog()
@@ -44,7 +45,7 @@ def sh_initial_setup_script(sh_script_path, new_message=None):
         message = "Password not provided. Exiting Program"
         logger.critical(message)
         sys.exit(1)
-
+    
 
 def run_bat_script(bat_script_path):
     pass

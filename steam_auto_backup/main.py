@@ -7,6 +7,7 @@ from script.script import *
 from gui.gui import *
 from logic.logic import *
 from logger.logger import *
+from model.model import *
 
 
 def main():
@@ -20,41 +21,41 @@ def main():
     system = platform.system()
 
     if system == "Linux":  # Execute Linux Code Blocks
-        # Set directory vars
-        expand_tilde = os.path.expanduser("~") # Specific for Linux OS
-        steamapps_directory = os.path.join(expand_tilde, ".local/share/Steam/steamapps")
-        steam_common_directory = os.path.join(steamapps_directory,"common")
-        base_directory = expand_tilde
 
-        # Set script paths
-        main_script_path = os.path.join(expand_tilde, python_script_directory, "script", "linux", "initial_setup.sh")
-        steamcmd_script_path = os.path.join(expand_tilde, python_script_directory, "script", "linux", "steam_cmd_terminal.sh")
+        # Get the user's home directory
+        user_home = os.path.expanduser("~")
+
+        # Define steamapps & common directory paths
+        steamapps_directory = os.path.join(user_home, ".steam", "steam", "steamapps")
+        steam_common_directory = os.path.join(steamapps_directory, "common")
+
+        # Define script directory paths
+        scripts_dir = os.path.join(user_home, python_script_directory, "script", "linux")
+        check_sudo_path = os.path.join(scripts_dir, "check_sudo_privileges.sh")
+        initial_setup_path = os.path.join(scripts_dir, "initial_setup.sh")
+        steamcmd_path = os.path.join(scripts_dir, "steam_cmd_terminal.sh")
 
         # Set .vdf/.json paths
-        vdf_steam_game_info_path = os.path.join(expand_tilde, python_script_directory, "json", "steam_game_info" )
+        steam_game_info_path = os.path.join(user_home, python_script_directory, "json", "steam_game_info" )
+
+        # Check Sudo priveleges <- Bug
+        # sudo_flag = check_sudo_privileges(check_sudo_path)
 
         # Run initial_setup.sh
-        sh_initial_setup_script(main_script_path)
+        # sh_initial_setup_script(initial_setup_path)
 
     if system == "Windows": # Execute Windows Code Block
         """
         We need to test this in a Windows OS enviroment. 
         This current code makes assumptions on pathing
         """
-        # Set directory vars
+        # Get the user's home directory
+        user_home = os.environ['USERPROFILE']
+
+        # Define script directory paths
         steamapps_directory = r"C:\Program Files (x86)\Steam\steamapps" 
-        steam_common_directory = os.path.join(steamapps_directory, "common")
-        base_directory = r"C:\Program Files (x86)"
 
-        # Set script paths
-        main_script_path = os.path.join(expand_tilde, python_script_directory, "script", "windows", "initial_setup.bat")
-        steamcmd_script_path = os.path.join(expand_tilde, python_script_directory, "script", "windows", "steam_cmd_terminal.bat")
-
-        # Set .vdf/.json paths
-        vdf_steam_game_info_path = os.path.join(python_script_directory, "json", "steam_game_info" )
-
-        # Run initial_setup.bat
-        run_bat_script(main_script_path)
+        # Add in windows specific paths like the Linux above
 
     """
     Based on above OS-specific path setting the below code should be OS agnostic
@@ -71,19 +72,27 @@ def main():
 
     # Create Steam manifest
     games_result = convert_acf_to_game_info(steamapps_directory)
+    # printout(games_result)
 
     # Login in once as Anonymous and then exit to setup SteamCMD CLI
-    login_to_steamcmd_as_anon(steamcmd_script_path, function_name="open_login_quit_steam_cmd")
+    login_to_steamcmd_as_anon(steamcmd_path, function_name="open_login_quit_steam_cmd")
 
     # Pass app_id from games_result to create .vdf file with all app info taken from SteamCMD
+    list_of_game_info_objs = []
     for game in games_result:
         app_id = game["app_id"]
-        get_steamcmd_app_info_script(steamcmd_script_path, function_name="get_app_info_vdf", app_id=app_id)
-        
+        get_steamcmd_app_info_script(steamcmd_path, function_name="get_app_info_vdf", app_id=app_id)
+
         # Convert .vdf files to .json format
-        vdf_to_json(vdf_steam_game_info_path, app_id)
+        vdf_to_json(steam_game_info_path, app_id)
         # Remove .vdf files <- Not stricly neccisary but makes it cleaner
-        remove_vdf_files(vdf_steam_game_info_path, app_id)
+        remove_vdf_files(steam_game_info_path, app_id)
+        # Create game_app_obj
+        new_game_info_obj = create_game_app_obj(steam_game_info_path, app_id)
+        list_of_game_info_objs.append(new_game_info_obj)
+
+    for obj in list_of_game_info_objs:
+        print(obj.name, obj.os_exec_pair)
 
     # Open Tkinter GUI
 
@@ -96,9 +105,9 @@ def main():
     # print(combined_selection_window.selected_directory)
     # print(combined_selection_window.selected_save_location)
 
-def vdf_to_json(vdf_steam_game_info_path, app_id):
-    vdf_path = f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf"
-    json_path = f"{vdf_steam_game_info_path}/{app_id}_app_info.json"
+def vdf_to_json(steam_game_info_path, app_id):
+    vdf_path = f"{steam_game_info_path}/{app_id}_app_info.vdf"
+    json_path = f"{steam_game_info_path}/{app_id}_app_info.json"
 
     try:
         with open(vdf_path, "r") as file:
@@ -128,9 +137,9 @@ def vdf_to_json(vdf_steam_game_info_path, app_id):
     message = f"{app_id} vdf to json Conversion completed successfully."
     logger.info(message)
 
-def remove_vdf_files (vdf_steam_game_info_path, app_id):
-    if os.path.exists(f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf"):
-        os.remove(f"{vdf_steam_game_info_path}/{app_id}_app_info.vdf")
+def remove_vdf_files (steam_game_info_path, app_id):
+    if os.path.exists(f"{steam_game_info_path}/{app_id}_app_info.vdf"):
+        os.remove(f"{steam_game_info_path}/{app_id}_app_info.vdf")
         message = f"{app_id}_app_info.vdf removed succesfully"
         logger.info(message)
     else:
@@ -138,12 +147,20 @@ def remove_vdf_files (vdf_steam_game_info_path, app_id):
         print(message)
         logger.error(message)
 
+def create_game_app_obj (steam_game_info_path, app_id):
+    if os.path.exists(f"{steam_game_info_path}/{app_id}_app_info.json"):
+        with open(f"{steam_game_info_path}/{app_id}_app_info.json", "r") as file:
+            data = json.load(file)
+            common_name = data.get(app_id, {}).get("common", {}).get("name")
+            config_info = data.get(app_id, {}).get("config", {})
+            launch_pairings = {}
+            for key, value in config_info["launch"].items():
+                os_list = value["config"]["oslist"]
+                executable = value["executable"]
+                launch_pairings[os_list] = executable
 
-
-
-
-
-
+            new_game_info_obj = Game_Info(common_name, launch_pairings)
+    return new_game_info_obj
 
 
 if __name__ == "__main__":

@@ -16,13 +16,13 @@ import time
 #             pids[process.info['name']] = str(process.info['pid'])
 #     return pids
 
-def find_exe_files(directory, exclude_files=None, exclude_directories=None):
-    exe_files = []
+# def find_exe_files(directory, exclude_files=None, exclude_directories=None):
+#     exe_files = []
 
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".exe"):
-                exe_files.append(file)
+#     for root, dirs, files in os.walk(directory):
+#         for file in files:
+#             if file.endswith(".exe"):
+#                 exe_files.append(file)
         
 
     #     print(files)
@@ -33,7 +33,7 @@ def find_exe_files(directory, exclude_files=None, exclude_directories=None):
     #                 continue
     #             exe_files[file_name] = False
 
-    return exe_files
+    # return exe_files
 
 
 """
