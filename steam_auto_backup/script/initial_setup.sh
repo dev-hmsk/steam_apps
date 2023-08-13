@@ -104,18 +104,5 @@ fi
 # Download SteamCMD
 check_and_install_package "steamcmd"
 
-# Run SteamCMD in terminal
-<<note
-Note: This might need another script to print out the stderr and make it into the tkinter file 
-versus keeping in the main setup
-note
-
-# cd ~
-# steamcmd
-
-# # Login in as anonymous user
-
-# login anonymous
-
 # Clear sudo priveleges at end of script
 sudo -k

@@ -27,7 +27,7 @@ def sh_initial_setup_script(sh_script_path, new_message=None):
             if "Sorry, try again" in stderr:
                 print("Incorrect sudo password entered. Retrying...")
                 message = "Incorrect Password Entered. Try Again"
-                run_shell_script(sh_script_path, message)  # Recursive message
+                sh_initial_setup_script(sh_script_path, message)  # Recursive message
 
             elif process.returncode == 0:
                 message = "initial_setup.sh script executed successfully."
@@ -51,10 +51,6 @@ def run_bat_script(bat_script_path):
     pass
 
 
-def get_steamcmd_app_info(app_id):
-    cmd = ["cd" "~" "steamcmd" ]
-
-
 def get_steamcmd_app_info_script(sh_steam_cmd_path, function_name, app_id):
     process = subprocess.Popen([sh_steam_cmd_path, function_name, app_id],
                                stdout=subprocess.PIPE,
@@ -63,9 +59,28 @@ def get_steamcmd_app_info_script(sh_steam_cmd_path, function_name, app_id):
     
     stdout, stderr = process.communicate()
 
-    print("Standard Output:")
-    print(stdout)
+    if stdout:
+        print("Standard Output:")
+        logger.info(stdout)
+        print(stdout)
+    if stderr:
+        print("Standard Error:")
+        logger.error(stderr)
+        print(stderr)
 
-    print("Standard Error:")
-    print(stderr)
+def login_to_steamcmd_as_anon(sh_steam_cmd_path, function_name):
+    process = subprocess.Popen([sh_steam_cmd_path, function_name],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE,
+                               text=True, bufsize=1)
     
+    stdout, stderr = process.communicate()
+    
+    if stdout:
+        print("Standard Output:")
+        logger.info(stdout)
+        print(stdout)
+    if stderr:
+        print("Standard Error:")
+        logger.error(stdout)
+        print(stderr)

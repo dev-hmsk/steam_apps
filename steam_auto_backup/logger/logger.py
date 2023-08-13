@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import traceback
 
 # Get the directory where the script is located
 script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -25,7 +24,7 @@ file_handler_error = logging.FileHandler(log_file_path_error)
 file_handler_error.setLevel(logging.ERROR)
 
 # Create a file handler and set level to CRITICAL
-log_file_path_critical= os.path.join(log_directory, 'critical.log')
+log_file_path_critical = os.path.join(log_directory, 'critical.log')
 file_handler_critical = logging.FileHandler(log_file_path_critical)
 file_handler_critical.setLevel(logging.CRITICAL)
 
@@ -51,7 +50,7 @@ logger.addHandler(console_handler)
 # Log messages
 logger.info("New Program Execution")
 
-# Logger Exceptions
+
 class MissingDirectoryError(Exception):
     def __init__(self, message):
         super().__init__(message)
@@ -64,11 +63,12 @@ class CriticalError(Exception):
         logger.critical(f"Critical Error Encountered. Shutting Down Program. {e}")
         sys.exit(1)
 
-# Logger Functions
+
 def check_directory(directory_name):
     if not os.path.exists(directory_name):
         error_message = f"Required {directory_name} is missing!"
         raise MissingDirectoryError(error_message)
+
 
 def clear_log_files():
     # List of log file names to clear

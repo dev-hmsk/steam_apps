@@ -22,16 +22,33 @@ def main():
         steamapps_directory = os.path.join(expand_tilde, ".local/share/Steam/steamapps")
         steam_common_directory = os.path.join(steamapps_directory,"common")
         base_directory = expand_tilde
-
-        # Select initial_setup.sh
-        sh_script_path = os.path.join(expand_tilde, python_script_directory, "script", "initial_setup.sh")   
+        
+        # Set script paths
+        sh_script_path = os.path.join(expand_tilde, python_script_directory, "script", "initial_setup.sh")
+        sh_steamcmd_path = os.path.join(expand_tilde, python_script_directory, "script", "steam_cmd_terminal.sh")
+        
+        # Run initial_setup.sh
         sh_initial_setup_script(sh_script_path)
         
-        
-        sh_steamcmd_path = os.path.join(expand_tilde, python_script_directory, "script", "steam_cmd_terminal.sh")
-        #  Create .json file with all app info taken from SteamCMD
-        get_steamcmd_app_info_script(sh_steamcmd_path, function_name="get_app_info_json", app_id="1162750")
+        # Check for Steam Directory
+        try:
+            check_directory(steamapps_directory)
 
+        except MissingDirectoryError as e:
+            error_message = str(e)
+            ErrorWindow(error_message)
+            CriticalError(e)
+
+        # Create Steam manifest
+        games_result = convert_acf_to_game_info(steamapps_directory)
+
+        # Login in once as Anonymous and then exit to setup SteamCMD CLI
+        login_to_steamcmd_as_anon(sh_steamcmd_path, function_name="open_login_quit_steam_cmd")
+
+        # Pass app_id from games_result to create .json file with all app info taken from SteamCMD
+        for game in games_result:
+            app_id = game["app_id"]
+            get_steamcmd_app_info_script(sh_steamcmd_path, function_name="get_app_info_json", app_id=app_id)
 
     if system == "Windows": # Execute Windows Code Block
         # Set directory vars
@@ -42,33 +59,15 @@ def main():
         bat_script_path = 'add/file/path/to/script.bat'
         run_bat_script(bat_script_path)
 
-    # Check for Steam Directory
-    try:
-        check_directory(steamapps_directory)
 
-    except MissingDirectoryError as e:
-        error_message = str(e)
-        ErrorWindow(error_message)
-        CriticalError(e)
+    # combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
+    # combined_selection_window.run()
 
-    # Create Steam manifest
-    games_result = convert_acf_to_game_info(steamapps_directory)
-    for game in games_result:
-        print(game["app_id"])
-
-    # printout(games_result)
-
-    game_list = game_name_list(games_result)
-    print(game_list)
-
-    combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
-    combined_selection_window.run()
-
-    # Debug Print
-    print(combined_selection_window.selected_file)
-    print(combined_selection_window.selected_multi_files)
-    print(combined_selection_window.selected_directory)
-    print(combined_selection_window.selected_save_location)
+    # # Debug Print
+    # print(combined_selection_window.selected_file)
+    # print(combined_selection_window.selected_multi_files)
+    # print(combined_selection_window.selected_directory)
+    # print(combined_selection_window.selected_save_location)
 
 
 
