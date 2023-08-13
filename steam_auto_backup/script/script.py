@@ -3,7 +3,7 @@ import subprocess
 from gui.gui import PasswordDialog
 from logger.logger import *
 
-def run_shell_script(sh_script_path, new_message=None):
+def sh_initial_setup_script(sh_script_path, new_message=None):
     # Get the sudo password from the user using a GUI dialog
     password_dialog_obj = PasswordDialog()
     if new_message:
@@ -55,7 +55,7 @@ def get_steamcmd_app_info(app_id):
     cmd = ["cd" "~" "steamcmd" ]
 
 
-def trigger_bash_script(sh_steam_cmd_path, function_name, app_id):
+def get_steamcmd_app_info_script(sh_steam_cmd_path, function_name, app_id):
     process = subprocess.Popen([sh_steam_cmd_path, function_name, app_id],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE,

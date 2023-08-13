@@ -24,15 +24,13 @@ def main():
         base_directory = expand_tilde
 
         # Select initial_setup.sh
-        sh_script_path = os.path.join(expand_tilde, python_script_directory, "script", "initial_setup.sh")
+        sh_script_path = os.path.join(expand_tilde, python_script_directory, "script", "initial_setup.sh")   
+        sh_initial_setup_script(sh_script_path)
         
-        # run_shell_script(sh_script_path)
-
+        
         sh_steamcmd_path = os.path.join(expand_tilde, python_script_directory, "script", "steam_cmd_terminal.sh")
-        
-
-        #  Get app info
-        trigger_bash_script(sh_steamcmd_path, function_name="get_app_info_json", app_id="1162750")
+        #  Create .json file with all app info taken from SteamCMD
+        get_steamcmd_app_info_script(sh_steamcmd_path, function_name="get_app_info_json", app_id="1162750")
 
 
     if system == "Windows": # Execute Windows Code Block
@@ -44,30 +42,33 @@ def main():
         bat_script_path = 'add/file/path/to/script.bat'
         run_bat_script(bat_script_path)
 
-    # # Check for Steam Directory
-    # try:
-    #     check_directory(steamapps_directory)
+    # Check for Steam Directory
+    try:
+        check_directory(steamapps_directory)
 
-    # except MissingDirectoryError as e:
-    #     error_message = str(e)
-    #     ErrorWindow(error_message)
-    #     CriticalError(e)
+    except MissingDirectoryError as e:
+        error_message = str(e)
+        ErrorWindow(error_message)
+        CriticalError(e)
 
-    # # Create Steam manifest
-    # games_result = convert_acf_to_game_info(steamapps_directory)
+    # Create Steam manifest
+    games_result = convert_acf_to_game_info(steamapps_directory)
+    for game in games_result:
+        print(game["app_id"])
+
     # printout(games_result)
 
-    # game_list = game_name_list(games_result)
-    # print(game_list)
+    game_list = game_name_list(games_result)
+    print(game_list)
 
-    # combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
-    # combined_selection_window.run()
+    combined_selection_window = CombinedSelectionWindow(system, steam_common_directory, base_directory, games_result)
+    combined_selection_window.run()
 
-    # # Debug Print
-    # print(combined_selection_window.selected_file)
-    # print(combined_selection_window.selected_multi_files)
-    # print(combined_selection_window.selected_directory)
-    # print(combined_selection_window.selected_save_location)
+    # Debug Print
+    print(combined_selection_window.selected_file)
+    print(combined_selection_window.selected_multi_files)
+    print(combined_selection_window.selected_directory)
+    print(combined_selection_window.selected_save_location)
 
 
 

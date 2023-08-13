@@ -128,22 +128,22 @@ def game_name_list(games_result):
     return game_name_list
 
 
-def all_variations_of_game_name(game_list):
-    new_set = set()
-    for name in game_list:
-        check_word_count = name.split()
-        if len(check_word_count) == 1:
-            new_set.add(name)
-        if len(check_word_count) > 1:
-            capital_letters = [letter for letter in name if letter.isupper()]
-            numbers = [number for number in name if number.isdigit()]
-            game_capital_letters = ''.join(capital_letters)
-            game_numbers = ''.join(numbers)
-            new_set.add(game_capital_letters+game_numbers)
-            new_set.add(game_capital_letters)
-            new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
+# def all_variations_of_game_name(game_list):
+#     new_set = set()
+#     for name in game_list:
+#         check_word_count = name.split()
+#         if len(check_word_count) == 1:
+#             new_set.add(name)
+#         if len(check_word_count) > 1:
+#             capital_letters = [letter for letter in name if letter.isupper()]
+#             numbers = [number for number in name if number.isdigit()]
+#             game_capital_letters = ''.join(capital_letters)
+#             game_numbers = ''.join(numbers)
+#             new_set.add(game_capital_letters+game_numbers)
+#             new_set.add(game_capital_letters)
+#             new_set.add(name.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", ""))
 
-    return new_set
+#     return new_set
 
 # def log_running_games(*args):
 #     running_games = []
