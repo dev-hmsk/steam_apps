@@ -2,8 +2,4 @@
 steam_auto_backup/json/**/*.json
 
 #Ignore all .log files in steam_auto_backup/logger/logger_info
-<<<<<<< HEAD
 steam_auto_backup/logger/logger_info/*.log
-=======
-steam_auto_backup/logger/logger_info/*.json
->>>>>>> 5cc9acd (Corrected .gitignore and .gitkeep throughout the directory)
