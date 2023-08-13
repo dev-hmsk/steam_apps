@@ -3,7 +3,7 @@
 # For Steam CMD Terminal
 # Navigate to and open Steam CMD
 
-open_steam_cmd () {
+function open_steam_cmd () {
     cd ~
     steamcmd
 }
@@ -11,21 +11,31 @@ open_steam_cmd () {
 # Below are SteamCMD CLI to be used within the CLI from above
 
 # Login in as Anon
-login_anonymous () {
+function login_anonymous () {
     login anonymous
 }
 
 #Login in with Steam Account
-login_steam_account () {
+function login_steam_account () {
     echo "Enter your steam username"
     read username
     login $username
 }
 
-# Capture and Print result of app_info_print() in the SteamCMD CLI
-read appid && echo "$(steamcmd +login anonymous +app_info_print $appid +quit)"
+# Function to get app info in JSON format
+function get_app_info_json () {
+    echo "Logging in to SteamCMD..."
+    steamcmd +app_info_print "$1" > "${1}_app_info.json" <<EOF
+quit
+EOF
+    sed -n '/Steam>/,$p' "${1}_app_info.json" > temp.json
+    mv temp.json "${1}_app_info.json"
+    sed -i '1d' "${1}_app_info.json"
+}
 
-# Capture and Print result of app_info_print() in the SteamCMD CLI with jq for specific info
-read appid && echo "$(steamcmd +login anonymous +app_info_print $appid +quit)" > test.txt | 
-
-#
+# Execute the specified function
+if [ "$1" == "get_app_info_json" ]; then
+    get_app_info_json "$2"
+else
+    echo "Invalid function name"
+fi

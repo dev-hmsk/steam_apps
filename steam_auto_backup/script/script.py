@@ -49,3 +49,23 @@ def run_shell_script(sh_script_path, new_message=None):
 
 def run_bat_script(bat_script_path):
     pass
+
+
+def get_steamcmd_app_info(app_id):
+    cmd = ["cd" "~" "steamcmd" ]
+
+
+def trigger_bash_script(sh_steam_cmd_path, function_name, app_id):
+    process = subprocess.Popen([sh_steam_cmd_path, function_name, app_id],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE,
+                               text=True, bufsize=1)
+    
+    stdout, stderr = process.communicate()
+
+    print("Standard Output:")
+    print(stdout)
+
+    print("Standard Error:")
+    print(stderr)
+    
