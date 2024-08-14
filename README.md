@@ -24,7 +24,7 @@
 - Backup can also be set to a timer to update every X minutes/hours/days
 - Add Steam User Login and extended functionality due to Steam User privelages (auto update games, activate betas etc.)
 
-## Steam Task Manager (deprecated due to Steam Auto Backup) 
+## Steam Task Manager (depreciated due to Steam Auto Backup) 
 - collects all .exe files from /common and uses psutil to listen for PIDs of .exe.
 - Converts the Steam provided .acf files into list of dicts to create a catalog of game sub directories.
 - Also uses fnmatch to create an exclusionary list of directories to reduce computation time. Runs locally without need of Steam API or keys
